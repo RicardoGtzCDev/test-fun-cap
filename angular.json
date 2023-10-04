@@ -13,24 +13,32 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "inlineTemplate": true,
-          "inlineStyle": true,
+          "inlineTemplate": false,
+          "inlineStyle": false,
           "skipTests": true
         },
         "@schematics/angular:class": {
           "skipTests": true
         },
+        "@schematics/angular:interface": {
+          "path": "src/app/shared/models"
+        },
         "@schematics/angular:directive": {
-          "skipTests": true
+          "skipTests": true,
+          "path": "src/app/shared/directives",
+          "module": "../modules/directives.module.ts"
         },
         "@schematics/angular:guard": {
-          "skipTests": true
+          "skipTests": true,
+          "path": "src/app/core/guards"
         },
         "@schematics/angular:interceptor": {
           "skipTests": true
         },
         "@schematics/angular:pipe": {
-          "skipTests": true
+          "skipTests": true,
+          "path": "src/app/shared/pipes",
+          "module": "../modules/pipes.module.ts"
         },
         "@schematics/angular:resolver": {
           "skipTests": true
