@@ -25,7 +25,7 @@ import { Component } from '@angular/core';
     </ul>
     <router-outlet></router-outlet>
   `,
-  styles: []
+  styles: [],
 })
 export class AppComponent {
   title = 'funCS-front';
