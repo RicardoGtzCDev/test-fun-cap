@@ -8,5 +8,9 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     RouterModule,
   ],
+  exports: [
+    CommonModule,
+    RouterModule,
+  ],
 })
 export class CoreModule { }
