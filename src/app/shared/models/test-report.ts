@@ -8,7 +8,7 @@ export interface IInscription {
   advance: number;
   anyTest: boolean;
   certificationDate: Date;
-  course: Course;
+  course: ICourse;
   courseId: number;
   folioCertificate: string;
   inscripcionDate: Date;
@@ -16,13 +16,13 @@ export interface IInscription {
   scoreCourse: number;
 }
 
-export interface Course {
+export interface ICourse {
   imageUrl: string;
   name: string;
-  sector: Sector;
+  sector: ISector;
 }
 
-export interface Sector {
+export interface ISector {
   colorTheme: string;
   id: number;
   name: string;

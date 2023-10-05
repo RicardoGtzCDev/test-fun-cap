@@ -17,8 +17,8 @@
             <form>
                 <mat-form-field class="px-2">
                     <mat-label class="text-xs">Categoría</mat-label>
-                    <mat-select [formControl]="selectedCategory">
-                        <mat-option *ngFor="let option of sectors" [value]="option">
+                    <mat-select [formControl]="selectedSector" (selectionChange)="filterByAndEmit()">
+                        <mat-option *ngFor="let option of sectorOptions" [value]="option">
                             {{option}}
                         </mat-option>
                     </mat-select>
@@ -27,8 +27,8 @@
             <form>
                 <mat-form-field class="px-2">
                     <mat-label class="text-xs">Progreso</mat-label>
-                    <mat-select [formControl]="selectedProgress">
-                        <mat-option *ngFor="let option of orderByOptions" [value]="option">
+                    <mat-select [formControl]="selectedProgress" (selectionChange)="filterByAndEmit()">
+                        <mat-option *ngFor="let option of progressOptions" [value]="option">
                             {{option}}
                         </mat-option>
                     </mat-select>
@@ -36,20 +36,21 @@
             </form>
         </div>
     </div>
-    <div class="basis-40 h-28 flex flex-wrap left-0 place-content-center mt-4">
-        <button
-            class="basis-full h-10 bg-green-500 rounded-md text-white font-bold text-base px-4 text-center active:scale-75 transition-transform"
-            type="button">
-            <span>Restablecer</span>
-        </button>
-    </div>
     <div class="basis-40 h-28 flex flex-wrap place-content-center">
         <span class="basis-full text-sm m-1">Buscar</span>
         <form class="basis-full flex">
-            <mat-form-field class="basis-full">
-                <mat-icon class="pt-1" matPrefix aria-hidden="false">search</mat-icon>
-                <input type="text" matInput>
+            <mat-form-field class="basis-auto">
+                <input type="text" matInput placeholder="Nombre del curso" [formControl]="searchName">
             </mat-form-field>
+            <button class="basis-auto active:scale-75 transition-transform" (click)="searchByName()"><mat-icon matPrefix
+                    aria-hidden="false">search</mat-icon></button>
         </form>
+    </div>
+    <div class="basis-40 h-28 flex flex-wrap left-0 place-content-center mt-1">
+        <button
+            class="basis-full h-10 bg-green-500 rounded-md text-white font-bold text-base px-4 text-center active:scale-75 transition-transform"
+            type="button" (click)="resetForms()">
+            <span>Restablecer</span>
+        </button>
     </div>
 </div>
