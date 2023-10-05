@@ -1,5 +1,12 @@
-<ng-container *ngIf="email && user && courses">
-    <div class="w-full min-h-[100vh] flex flex-wrap justify-center bg-slate-600">
-        <app-user-header class="basis-full" [email]="email" [user]="user"></app-user-header>
+<ng-container *ngIf="email && user && inscriptions">
+    <div class="w-full min-h-[100vh] flex flex-wrap justify-center content-start bg-slate-600">
+        <app-user-header class="basis-full min-h-[64px]" [email]="email" [user]="user"></app-user-header>
+        <app-inscriptions-filter class="basis-full min-h-[126px] mt-0 bg-slate-300" [inscriptions]="inscriptions"
+            (mappedInscriptions)="onMappedInscriptions($event)"></app-inscriptions-filter>
+        <div class="basis-full">
+            <div class="w-full h-auto">
+                cursos
+            </div>
+        </div>
     </div>
 </ng-container>

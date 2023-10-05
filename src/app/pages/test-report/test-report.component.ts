@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TestReportService } from 'src/app/core/api/test-report.service';
 import { CoreModule } from 'src/app/core/core.module';
+import { InscriptionsFilterComponent } from 'src/app/shared/components/inscriptions-filter/inscriptions-filter.component';
 import { UserHeaderComponent } from 'src/app/shared/components/user-header/user-header.component';
 import { IInscription, IPerson } from 'src/app/shared/models/test-report';
 
@@ -9,13 +10,13 @@ import { IInscription, IPerson } from 'src/app/shared/models/test-report';
   templateUrl: './test-report.component.html',
   styleUrls: [],
   standalone: true,
-  imports: [CoreModule, UserHeaderComponent],
+  imports: [CoreModule, UserHeaderComponent, InscriptionsFilterComponent],
 })
 export class TestReportComponent {
   // declarations
-  email : string = '';
+  email: string = '';
   user!: IPerson;
-  courses!: IInscription[];
+  inscriptions!: IInscription[];
 
   // construct
   constructor(
@@ -25,9 +26,13 @@ export class TestReportComponent {
       next: (response) => {
         this.email = response.email;
         [this.user] = response.people;
-        this.courses = response.inscriptions;
+        this.inscriptions = response.inscriptions;
       },
       error: () => { },
     });
   }
+
+  onMappedInscriptions = (items: IInscription[]) => {
+    console.log('onMapped', items);
+  };
 }
