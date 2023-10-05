@@ -25,8 +25,7 @@
         },
         "@schematics/angular:directive": {
           "skipTests": true,
-          "path": "src/app/shared/directives",
-          "module": "../modules/directives.module.ts"
+          "path": "src/app/shared/directives"
         },
         "@schematics/angular:guard": {
           "skipTests": true,
@@ -37,8 +36,7 @@
         },
         "@schematics/angular:pipe": {
           "skipTests": true,
-          "path": "src/app/shared/pipes",
-          "module": "../modules/pipes.module.ts"
+          "path": "src/app/shared/pipes"
         },
         "@schematics/angular:resolver": {
           "skipTests": true

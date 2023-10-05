@@ -68,7 +68,7 @@ export class InscriptionsFilterComponent implements OnChanges {
     } else if (filterSector) {
       filteredItems = this.filterBy('sector', this.inscriptions, filterSector);
     } else if (filterProgress) {
-      filteredItems = this.filterBy('sector', this.inscriptions, filterProgress);
+      filteredItems = this.filterBy('progress', this.inscriptions, filterProgress);
     } else {
       filteredItems = this.inscriptions;
     }
@@ -83,9 +83,9 @@ export class InscriptionsFilterComponent implements OnChanges {
         filteredItems = items.filter((item) => item.course.sector.name === filter);
         break;
       case 'progress':
-        if (filter === 'Sin Iniciar') {
+        if (filter === PROGRESS_OPTIONS[0]) {
           filteredItems = items.filter((item) => item.advance === 0);
-        } else if (filter === 'Finalizado') {
+        } else if (filter === PROGRESS_OPTIONS[2]) {
           filteredItems = items.filter((item) => item.advance === 100);
         } else {
           filteredItems = items.filter((item) => item.advance !== 0 && item.advance !== 100);

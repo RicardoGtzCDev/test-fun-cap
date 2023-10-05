@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TestReportService } from 'src/app/core/api/test-report.service';
 import { CoreModule } from 'src/app/core/core.module';
+import { CourseCardComponent } from 'src/app/shared/components/course-card/course-card.component';
 import { InscriptionsFilterComponent } from 'src/app/shared/components/inscriptions-filter/inscriptions-filter.component';
 import { UserHeaderComponent } from 'src/app/shared/components/user-header/user-header.component';
 import { IInscription, IPerson } from 'src/app/shared/models/test-report';
@@ -10,15 +11,16 @@ import { IInscription, IPerson } from 'src/app/shared/models/test-report';
   templateUrl: './test-report.component.html',
   styleUrls: [],
   standalone: true,
-  imports: [CoreModule, UserHeaderComponent, InscriptionsFilterComponent],
+  imports: [CoreModule, UserHeaderComponent, InscriptionsFilterComponent, CourseCardComponent],
 })
 export class TestReportComponent {
   // declarations
   email: string = '';
   user!: IPerson;
   inscriptions!: IInscription[];
+  mappedInscriptions: IInscription[] = [];
+  pagination: number = 1;
 
-  // construct
   constructor(
     private testReportService: TestReportService,
   ) {
@@ -27,12 +29,14 @@ export class TestReportComponent {
         this.email = response.email;
         [this.user] = response.people;
         this.inscriptions = response.inscriptions;
+        this.mappedInscriptions = response.inscriptions;
       },
       error: () => { },
     });
   }
 
   onMappedInscriptions = (items: IInscription[]) => {
-    console.log('onMapped', items);
+    console.log(items);
+    this.mappedInscriptions = items;
   };
 }

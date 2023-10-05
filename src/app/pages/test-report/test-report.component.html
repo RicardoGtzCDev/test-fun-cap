@@ -4,9 +4,16 @@
         <app-inscriptions-filter class="basis-full min-h-[126px] mt-0 bg-slate-300" [inscriptions]="inscriptions"
             (mappedInscriptions)="onMappedInscriptions($event)"></app-inscriptions-filter>
         <div class="basis-full">
-            <div class="w-full h-auto">
-                cursos
+            <div class="w-full h-auto flex flex-wrap gap-10 place-content-center py-6 px-4">
+                <ng-container *ngFor="let item of mappedInscriptions">
+                    <app-course-card class="basis-96" [course]="item"></app-course-card>
+                </ng-container>
             </div>
+        </div>
+        <div class="basis-full flex flex-wrap">
+
+
+
         </div>
     </div>
 </ng-container>
