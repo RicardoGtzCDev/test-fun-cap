@@ -14,12 +14,13 @@ import { IInscription, IPerson } from 'src/app/shared/models/test-report';
   imports: [CoreModule, UserHeaderComponent, InscriptionsFilterComponent, CourseCardComponent],
 })
 export class TestReportComponent {
-  // declarations
   email: string = '';
   user!: IPerson;
   inscriptions!: IInscription[];
   mappedInscriptions: IInscription[] = [];
-  pagination: number = 1;
+  paginatedInscriptions: IInscription[] = [];
+  pagination: number[] = [];
+  currentPage: number = 1;
 
   constructor(
     private testReportService: TestReportService,
@@ -30,13 +31,40 @@ export class TestReportComponent {
         [this.user] = response.people;
         this.inscriptions = response.inscriptions;
         this.mappedInscriptions = response.inscriptions;
+        let pages = Math.floor(this.mappedInscriptions.length / 8);
+        if (this.mappedInscriptions.length % 8 > 0) { pages += 1; }
+        this.pagination = [...Array(pages).keys()];
+        this.paginate(0);
       },
       error: () => { },
     });
   }
 
   onMappedInscriptions = (items: IInscription[]) => {
-    console.log(items);
     this.mappedInscriptions = items;
+    let pages = Math.floor(items.length / 8);
+    if (this.mappedInscriptions.length % 8 > 0) { pages += 1; }
+    this.pagination = [...Array(pages).keys()];
+    this.paginate(0);
+  };
+
+  paginate = (page: number) => {
+    this.currentPage = page;
+    const start = (8 * page);
+    const elements = 8;
+    const pagedItems: IInscription[] = [...this.mappedInscriptions];
+    this.paginatedInscriptions = pagedItems.splice(start, elements);
+  };
+
+  previewsPage = () => {
+    if (this.currentPage > 0) {
+      this.paginate(this.currentPage - 1);
+    }
+  };
+
+  nextPage = () => {
+    if (this.currentPage < this.pagination.length - 1) {
+      this.paginate(this.currentPage + 1);
+    }
   };
 }
