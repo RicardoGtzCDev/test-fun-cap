@@ -1,5 +1,5 @@
 <div class="w-full min-h-full flex flex-wrap place-content-center md:place-content-start px-10 gap-10">
-    <div class="basis-40 h-28 flex flex-wrap place-content-center">
+    <div class="basis-48 h-28 flex flex-wrap place-content-center">
         <span class="basis-full text-sm m-1">Ordenar por:</span>
         <form class="basis-full">
             <mat-form-field class="px-2">
@@ -11,8 +11,8 @@
             </mat-form-field>
         </form>
     </div>
-    <div class="basis-[416px] h-28 flex flex-wrap place-content-center">
-        <span class="basis-48 sm:basis-full text-sm m-1 text-left">Filtrar por:</span>
+    <div class="basis-[500px] h-28 flex flex-wrap place-content-center">
+        <span class="basis-48 sm:basis-full text-sm m-1 text-left sm:pl-4">Filtrar por:</span>
         <div class="basis-full flex flex-wrap gap-3 place-content-center">
             <form class="basis-auto flex flex-wrap">
                 <mat-form-field class="px-2">
@@ -36,14 +36,14 @@
             </form>
         </div>
     </div>
-    <div class="basis-40 h-28 flex flex-wrap place-content-center">
+    <div class="basis-48 h-28 flex flex-wrap place-content-center">
         <span class="basis-full text-sm m-1">Buscar</span>
-        <form class="basis-full flex">
-            <mat-form-field class="basis-auto">
+        <form class="basis-full flex gap-2">
+            <mat-form-field class="basis-11/12">
                 <input type="text" matInput placeholder="Nombre del curso" [formControl]="searchName">
             </mat-form-field>
-            <button class="basis-auto active:scale-75 transition-transform" (click)="searchByName()"><mat-icon matPrefix
-                    aria-hidden="false">search</mat-icon></button>
+            <button class="basis-auto active:scale-75 transition-transform mb-2" (click)="searchByName()"><mat-icon
+                    matPrefix aria-hidden="false">search</mat-icon></button>
         </form>
     </div>
     <div class="basis-40 h-28 flex flex-wrap left-0 place-content-center mt-1">
