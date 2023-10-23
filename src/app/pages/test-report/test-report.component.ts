@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TestReportService } from 'src/app/core/api/test-report.service';
 import { CoreModule } from 'src/app/core/core.module';
 import { CourseCardComponent } from 'src/app/shared/components/course-card/course-card.component';
@@ -22,10 +22,10 @@ export class TestReportComponent {
   pagination: number[] = [];
   currentPage: number = 1;
 
-  constructor(
-    private testReportService: TestReportService,
-  ) {
-    testReportService.getTestReport().subscribe({
+  private testReportService = inject(TestReportService);
+
+  constructor() {
+    this.testReportService.getTestReport().subscribe({
       next: (response) => {
         this.email = response.email;
         [this.user] = response.people;
