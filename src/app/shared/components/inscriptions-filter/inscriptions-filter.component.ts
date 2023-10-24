@@ -1,5 +1,5 @@
 import {
-  Component, EventEmitter, Input, OnChanges, Output, SimpleChanges,
+  Component, EventEmitter, Input, Output, WritableSignal, signal, computed, Signal,
 } from '@angular/core';
 import { CoreModule } from 'src/app/core/core.module';
 import { FormControl } from '@angular/forms';
@@ -14,8 +14,8 @@ import { IInscription } from 'src/app/shared/models/test-report';
   styles: [
   ],
 })
-export class InscriptionsFilterComponent implements OnChanges {
-  @Input() inscriptions: IInscription[] = [];
+export class InscriptionsFilterComponent {
+  @Input() inscriptions: WritableSignal<IInscription[]> = signal<IInscription[]>([]);
   @Output() mappedInscriptions = new EventEmitter<IInscription[]>();
 
   orderByOptions: string[] = ORDER_OPTIONS;
@@ -25,37 +25,28 @@ export class InscriptionsFilterComponent implements OnChanges {
   selectedProgress = new FormControl('');
   searchName = new FormControl('');
 
-  sectorOptions: string[] = [];
-  progressOptions: string[] = [];
+  sectorOptions: Signal<string[]> = computed(() => [...new Set(
+    this.inscriptions().map((value) => (value.course.sector.name)),
+  )]
+    .sort((a, b) => {
+      if (a < b) { return -1; }
+      if (a > b) { return 1; }
+      return 0;
+    }));
+  progressOptions: Signal<string[]> = computed(() => [...new Set(
+    this.inscriptions().map((value) => {
+      if (value.advance === 0) { return PROGRESS_OPTIONS[0]; }
+      if (value.advance === 100) { return PROGRESS_OPTIONS[2]; }
+      return PROGRESS_OPTIONS[1];
+    }),
+  )]);
 
   filteredInscriptions: IInscription[] = [];
 
-  constructor() { }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['inscriptions']) {
-      const newValue: IInscription[] = changes['inscriptions'].currentValue;
-      const oldValue: IInscription[] = changes['inscriptions'].previousValue;
-      if (newValue !== oldValue) {
-        this.sectorOptions = [...new Set(
-          newValue.map((value) => (value.course.sector.name)),
-        )]
-          .sort((a, b) => {
-            if (a < b) { return -1; }
-            if (a > b) { return 1; }
-            return 0;
-          });
-
-        this.progressOptions = [...new Set(
-          newValue.map((value) => {
-            if (value.advance === 0) { return PROGRESS_OPTIONS[0]; }
-            if (value.advance === 100) { return PROGRESS_OPTIONS[2]; }
-            return PROGRESS_OPTIONS[1];
-          }),
-        )];
-        this.filteredInscriptions = newValue;
-      }
-    }
+  constructor() {
+    setTimeout(() => {
+      this.resetForms();
+    }, 200);
   }
 
   filter = () => {
@@ -63,14 +54,14 @@ export class InscriptionsFilterComponent implements OnChanges {
     const filterSector = this.selectedSector.getRawValue();
     const filterProgress = this.selectedProgress.getRawValue();
     if (filterSector && filterProgress) {
-      filteredItems = this.filterBy('sector', this.inscriptions, filterSector);
+      filteredItems = this.filterBy('sector', this.inscriptions(), filterSector);
       filteredItems = this.filterBy('progress', filteredItems, filterProgress);
     } else if (filterSector) {
-      filteredItems = this.filterBy('sector', this.inscriptions, filterSector);
+      filteredItems = this.filterBy('sector', this.inscriptions(), filterSector);
     } else if (filterProgress) {
-      filteredItems = this.filterBy('progress', this.inscriptions, filterProgress);
+      filteredItems = this.filterBy('progress', this.inscriptions(), filterProgress);
     } else {
-      filteredItems = this.inscriptions;
+      filteredItems = this.inscriptions();
     }
     this.filteredInscriptions = filteredItems;
     return filteredItems;
@@ -175,11 +166,11 @@ export class InscriptionsFilterComponent implements OnChanges {
   };
 
   resetForms = () => {
-    this.filteredInscriptions = this.inscriptions;
+    this.filteredInscriptions = this.inscriptions();
     this.searchName.patchValue('');
     this.selectedOrder.patchValue('');
     this.selectedSector.patchValue('');
     this.selectedProgress.patchValue('');
-    this.emit(this.inscriptions);
+    this.emit(this.inscriptions());
   };
 }

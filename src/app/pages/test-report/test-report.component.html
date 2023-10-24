@@ -1,18 +1,18 @@
-<ng-container *ngIf="email && user && inscriptions">
+<ng-container *ngIf="email() && user() && inscriptions()">
     <div class="w-full min-h-[100vh] flex flex-wrap justify-center content-start bg-slate-600">
         <app-user-header class="basis-full min-h-[64px]" [email]="email" [user]="user"></app-user-header>
         <app-inscriptions-filter class="basis-full min-h-[100px] mt-0 bg-slate-300" [inscriptions]="inscriptions"
             (mappedInscriptions)="onMappedInscriptions($event)"></app-inscriptions-filter>
         <div class="basis-full">
             <div class="w-full min-h-[568px] flex flex-wrap gap-10 place-content-center py-6 px-4">
-                <ng-container *ngFor="let item of paginatedInscriptions">
+                <ng-container *ngFor="let item of paginatedInscriptions()">
                     <app-course-card class="basis-96" [course]="item"></app-course-card>
                 </ng-container>
             </div>
         </div>
         <div class="basis-full flex flex-wrap place-content-center py-6">
             <span class="basis-full text-center text-white text-xs py-2">
-                Página {{currentPage+1}} de {{pagination.length}}
+                Página {{currentPage()+1}} de {{pagination.length}}
             </span>
             <nav aria-label="page navigation">
                 <ul class="flex items-center -space-x-px h-10 text-base">
@@ -27,7 +27,7 @@
                             </svg>
                         </a>
                     </li>
-                    <ng-container *ngFor="let item of pagination">
+                    <ng-container *ngFor="let item of pagination()">
                         <li>
                             <a (click)="paginate(item)"
                                 class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">

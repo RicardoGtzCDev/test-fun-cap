@@ -18,7 +18,7 @@
                 <mat-form-field class="px-2">
                     <mat-label class="text-xs">Categoría</mat-label>
                     <mat-select [formControl]="selectedSector" (selectionChange)="filterByAndEmit()">
-                        <mat-option *ngFor="let option of sectorOptions" [value]="option">
+                        <mat-option *ngFor="let option of sectorOptions()" [value]="option">
                             {{option}}
                         </mat-option>
                     </mat-select>
@@ -28,7 +28,7 @@
                 <mat-form-field class="px-2">
                     <mat-label class="text-xs">Progreso</mat-label>
                     <mat-select [formControl]="selectedProgress" (selectionChange)="filterByAndEmit()">
-                        <mat-option *ngFor="let option of progressOptions" [value]="option">
+                        <mat-option *ngFor="let option of progressOptions()" [value]="option">
                             {{option}}
                         </mat-option>
                     </mat-select>

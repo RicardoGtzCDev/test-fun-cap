@@ -1,5 +1,8 @@
-import { Component, inject } from '@angular/core';
+import {
+  Component, WritableSignal, inject, signal,
+} from '@angular/core';
 import { TestReportService } from 'src/app/core/api/test-report.service';
+import { ELEMENTS_PER_PAGE } from 'src/app/core/constants';
 import { CoreModule } from 'src/app/core/core.module';
 import { CourseCardComponent } from 'src/app/shared/components/course-card/course-card.component';
 import { InscriptionsFilterComponent } from 'src/app/shared/components/inscriptions-filter/inscriptions-filter.component';
@@ -14,57 +17,56 @@ import { IInscription, IPerson } from 'src/app/shared/models/test-report';
   imports: [CoreModule, UserHeaderComponent, InscriptionsFilterComponent, CourseCardComponent],
 })
 export class TestReportComponent {
-  email: string = '';
-  user!: IPerson;
-  inscriptions!: IInscription[];
-  mappedInscriptions: IInscription[] = [];
-  paginatedInscriptions: IInscription[] = [];
-  pagination: number[] = [];
-  currentPage: number = 1;
+  email: WritableSignal<string> = signal('');
+  user: WritableSignal<IPerson> = signal<IPerson>({
+    lastName: '',
+    name: '',
+  });
+  inscriptions: WritableSignal<IInscription[]> = signal<IInscription[]>([]);
+
+  mappedInscriptions: WritableSignal<IInscription[]> = signal<IInscription[]>([]);
+  pagination: WritableSignal<number[]> = signal<number[]>([]);
+  currentPage: WritableSignal<number> = signal(1);
+  paginatedInscriptions: WritableSignal<IInscription[]> = signal<IInscription[]>([]);
 
   private testReportService = inject(TestReportService);
 
   constructor() {
     this.testReportService.getTestReport().subscribe({
       next: (response) => {
-        this.email = response.email;
-        [this.user] = response.people;
-        this.inscriptions = response.inscriptions;
-        this.mappedInscriptions = response.inscriptions;
-        let pages = Math.floor(this.mappedInscriptions.length / 8);
-        if (this.mappedInscriptions.length % 8 > 0) { pages += 1; }
-        this.pagination = [...Array(pages).keys()];
-        this.paginate(0);
+        this.email.set(response.email);
+        this.user.set(response.people[0]);
+        this.inscriptions.set(response.inscriptions);
+        this.onMappedInscriptions(response.inscriptions);
       },
       error: () => { },
     });
   }
 
   onMappedInscriptions = (items: IInscription[]) => {
-    this.mappedInscriptions = items;
-    let pages = Math.floor(items.length / 8);
-    if (this.mappedInscriptions.length % 8 > 0) { pages += 1; }
-    this.pagination = [...Array(pages).keys()];
+    this.mappedInscriptions.set(items);
+    let pages = Math.floor(items.length / ELEMENTS_PER_PAGE);
+    if (items.length % ELEMENTS_PER_PAGE > 0) { pages += 1; }
+    this.pagination.set([...Array(pages).keys()]);
     this.paginate(0);
   };
 
   paginate = (page: number) => {
-    this.currentPage = page;
-    const start = (8 * page);
-    const elements = 8;
-    const pagedItems: IInscription[] = [...this.mappedInscriptions];
-    this.paginatedInscriptions = pagedItems.splice(start, elements);
+    this.currentPage.set(page);
+    const start = (ELEMENTS_PER_PAGE * page);
+    const pagedItems: IInscription[] = [...this.mappedInscriptions()];
+    this.paginatedInscriptions.set(pagedItems.splice(start, ELEMENTS_PER_PAGE));
   };
 
   previewsPage = () => {
-    if (this.currentPage > 0) {
-      this.paginate(this.currentPage - 1);
+    if (this.currentPage() > 0) {
+      this.paginate(this.currentPage() - 1);
     }
   };
 
   nextPage = () => {
-    if (this.currentPage < this.pagination.length - 1) {
-      this.paginate(this.currentPage + 1);
+    if (this.currentPage() < this.pagination().length - 1) {
+      this.paginate(this.currentPage() + 1);
     }
   };
 }
