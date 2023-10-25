@@ -1,10 +1,11 @@
 import {
-  Component, EventEmitter, Input, Output, WritableSignal, signal, computed, Signal,
+  Component, computed, Signal, inject, effect,
 } from '@angular/core';
 import { CoreModule } from 'src/app/core/core.module';
 import { FormControl } from '@angular/forms';
-import { ORDER_OPTIONS, PROGRESS_OPTIONS } from 'src/app/core/constants';
+import { ELEMENTS_PER_PAGE, ORDER_OPTIONS, PROGRESS_OPTIONS } from 'src/app/core/constants';
 import { IInscription } from 'src/app/shared/models/test-report';
+import { TestReportStoreService } from 'src/app/shared/services/test-report-store.service';
 
 @Component({
   selector: 'app-inscriptions-filter',
@@ -15,8 +16,7 @@ import { IInscription } from 'src/app/shared/models/test-report';
   ],
 })
 export class InscriptionsFilterComponent {
-  @Input() inscriptions: WritableSignal<IInscription[]> = signal<IInscription[]>([]);
-  @Output() mappedInscriptions = new EventEmitter<IInscription[]>();
+  private testReportStore = inject(TestReportStoreService);
 
   orderByOptions: string[] = ORDER_OPTIONS;
 
@@ -26,7 +26,7 @@ export class InscriptionsFilterComponent {
   searchName = new FormControl('');
 
   sectorOptions: Signal<string[]> = computed(() => [...new Set(
-    this.inscriptions().map((value) => (value.course.sector.name)),
+    this.testReportStore.inscriptions().map((value) => (value.course.sector.name)),
   )]
     .sort((a, b) => {
       if (a < b) { return -1; }
@@ -34,7 +34,7 @@ export class InscriptionsFilterComponent {
       return 0;
     }));
   progressOptions: Signal<string[]> = computed(() => [...new Set(
-    this.inscriptions().map((value) => {
+    this.testReportStore.inscriptions().map((value) => {
       if (value.advance === 0) { return PROGRESS_OPTIONS[0]; }
       if (value.advance === 100) { return PROGRESS_OPTIONS[2]; }
       return PROGRESS_OPTIONS[1];
@@ -44,9 +44,10 @@ export class InscriptionsFilterComponent {
   filteredInscriptions: IInscription[] = [];
 
   constructor() {
-    setTimeout(() => {
+    effect(() => {
+      console.log('filter', this.testReportStore.inscriptions().length);
       this.resetForms();
-    }, 200);
+    }, { allowSignalWrites: true });
   }
 
   filter = () => {
@@ -54,14 +55,14 @@ export class InscriptionsFilterComponent {
     const filterSector = this.selectedSector.getRawValue();
     const filterProgress = this.selectedProgress.getRawValue();
     if (filterSector && filterProgress) {
-      filteredItems = this.filterBy('sector', this.inscriptions(), filterSector);
+      filteredItems = this.filterBy('sector', this.testReportStore.inscriptions(), filterSector);
       filteredItems = this.filterBy('progress', filteredItems, filterProgress);
     } else if (filterSector) {
-      filteredItems = this.filterBy('sector', this.inscriptions(), filterSector);
+      filteredItems = this.filterBy('sector', this.testReportStore.inscriptions(), filterSector);
     } else if (filterProgress) {
-      filteredItems = this.filterBy('progress', this.inscriptions(), filterProgress);
+      filteredItems = this.filterBy('progress', this.testReportStore.inscriptions(), filterProgress);
     } else {
-      filteredItems = this.inscriptions();
+      filteredItems = this.testReportStore.inscriptions();
     }
     this.filteredInscriptions = filteredItems;
     return filteredItems;
@@ -127,7 +128,10 @@ export class InscriptionsFilterComponent {
   };
 
   emit = (updatedInscriptions: IInscription[]) => {
-    this.mappedInscriptions.emit(updatedInscriptions);
+    this.testReportStore.mappedInscriptions.set(updatedInscriptions);
+    let pages = Math.floor(updatedInscriptions.length / ELEMENTS_PER_PAGE);
+    if (updatedInscriptions.length % ELEMENTS_PER_PAGE > 0) { pages += 1; }
+    this.testReportStore.pagination.set([...Array(pages).keys()]);
   };
 
   orderByAndEmit = (by: string) => {
@@ -166,11 +170,11 @@ export class InscriptionsFilterComponent {
   };
 
   resetForms = () => {
-    this.filteredInscriptions = this.inscriptions();
+    this.filteredInscriptions = this.testReportStore.inscriptions();
     this.searchName.patchValue('');
     this.selectedOrder.patchValue('');
     this.selectedSector.patchValue('');
     this.selectedProgress.patchValue('');
-    this.emit(this.inscriptions());
+    this.emit(this.testReportStore.inscriptions());
   };
 }

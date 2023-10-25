@@ -1,5 +1,5 @@
 // import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 //
 // import { API_URL } from 'src/app/core/constants';
 import { ITestReport } from 'src/app/shared/models/test-report';
